@@ -16,6 +16,8 @@ contract RWAVault {
     uint256 public price_ITO;
     uint256 public price_recall;
     uint256 public tokens_distributed;
+    uint256 public recall_time;
+    uint256 public creation_time;
 
     event NFTDeposited(
         address indexed depositor,
@@ -31,15 +33,18 @@ contract RWAVault {
     constructor(address _rwaTokenFactory) {
         owner = msg.sender;
         rwaTokenFactory = _rwaTokenFactory;
+        creation_time = block.timestamp;
     }
 
     // @dev  price_ITO and price_recall should be in wei
+    // _recall_time in uint256
     function depositRWA(
         address _rwa,
         uint256 _tokenId,
         uint256 _shares,
         uint256 _price_ITO,
-        uint256 _price_recall
+        uint256 _price_recall,
+        uint256 _recall_time
     ) external {
         require(_shares != 0, "shares should be greater than 0");
         require(_price_ITO > 0, "ITO price should be greater than 0");
@@ -54,6 +59,7 @@ contract RWAVault {
         totalShares = _shares;
         price_ITO = _price_ITO;
         price_recall = _price_recall;
+        recall_time = _recall_time;
         TokenFactory tokenFactory = TokenFactory(rwaTokenFactory);
         tokenFactory.CreateNewToken(totalShares);
         emit NFTDeposited(msg.sender, _rwa, _tokenId);
@@ -75,6 +81,10 @@ contract RWAVault {
 
     //code to distribute amount and get back tokens
     function withdrawRWA(address _nftContract) external payable {
+        require(
+            recall_time <= block.timestamp - creation_time,
+            "can not withdraw before recall time"
+        );
         require(
             rwaAddress != address(0),
             "No NFT deposited from this contract"
