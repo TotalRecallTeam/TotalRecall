@@ -8,5 +8,7 @@ contract MyRWA is ERC721, Ownable {
     constructor()
         ERC721("myRWA", "RWA")
         Ownable(msg.sender)
-    {}
+    {
+        _safeMint(msg.sender, 0);
+    }
 }
