@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract RWAToken is ERC20, ERC20Burnable, Ownable {
     address[] public holders;
-    uint256 public MAXMINT;
 
     constructor(
         address _owner,
