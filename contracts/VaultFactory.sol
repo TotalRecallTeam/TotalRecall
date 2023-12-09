@@ -6,8 +6,8 @@ import {RWAVault} from "./vault.sol";
 contract VaultFactory {
     mapping(address => RWAVault[]) vaultMapping;
 
-    function CreateNewToken() public {
-        RWAVault vault = new RWAVault();
+    function CreateNewVault(address _tokenfactory) public {
+        RWAVault vault = new RWAVault(_tokenfactory);
         vaultMapping[msg.sender].push(vault);
     }
 }

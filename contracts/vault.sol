@@ -4,11 +4,13 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {RWAToken} from "./RWAtoken.sol";
+import {TokenFactory} from "./TokenFactory.sol";
 
 contract RWAVault{
     address public owner;
     address public rwaAddress;
     address public rwaTokenAddress;
+    address public rwaTokenFactory;
     uint256 public tokenID;
     uint256 public totalShares;
     uint256 public price_ITO;
@@ -17,8 +19,9 @@ contract RWAVault{
     event NFTDeposited(address indexed depositor, address indexed nftContract, uint256 indexed tokenId);
     event NFTWithdrawn(address indexed withdrawer, address indexed nftContract, uint256 indexed tokenId);
     
-    constructor() {
+    constructor(address _rwaTokenFactory) {
         owner = msg.sender;
+        rwaTokenFactory = _rwaTokenFactory;
     }
 
     function depositRWA(address _rwa, uint256 _tokenId, uint256 _shares, uint256 _price_ITO, uint256 _price_recall) external {
@@ -35,6 +38,8 @@ contract RWAVault{
         totalShares = _shares;
         price_ITO = _price_ITO;
         price_recall = _price_recall;
+        TokenFactory tokenFactory = TokenFactory(rwaTokenFactory);
+        tokenFactory.CreateNewToken(totalShares);
         emit NFTDeposited(msg.sender, _rwa, _tokenId);
     }
 
