@@ -5,8 +5,8 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MyRWA is ERC721, Ownable {
-    constructor(address initialOwner)
+    constructor()
         ERC721("myRWA", "RWA")
-        Ownable(initialOwner)
+        Ownable(msg.sender)
     {}
 }

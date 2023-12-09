@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.19;
 
-import {RWAVault} from "./vault.sol";
+import {RWAVault} from "./Vault.sol";
 
 contract VaultFactory {
     mapping(address => RWAVault[]) vaultMapping;

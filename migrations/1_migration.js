@@ -1,6 +1,9 @@
-var RWAVault = artifacts.require("RWAVault");
+var VaultFactory = artifacts.require("VaultFactory");
+var RWA = artifacts.require("MyRWA");
 
 module.exports = function(deployer) {
   // deployment steps
-  deployer.deploy(RWAVault);
-};
+  deployer.deploy(RWA);
+  deployer.deploy(VaultFactory);
+  // rwa = RWA.deployed();
+  };
