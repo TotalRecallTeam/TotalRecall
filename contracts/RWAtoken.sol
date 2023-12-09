@@ -14,7 +14,6 @@ contract RWAToken is ERC20, ERC20Burnable, Ownable {
         uint256 _amount
     ) ERC20("RWAToken", "RTKN") Ownable(_owner) {
         _mint(_owner, _amount);
-        holders.push(_owner);
     }
 
     function burnAllTokens() public onlyOwner {
@@ -26,10 +25,9 @@ contract RWAToken is ERC20, ERC20Burnable, Ownable {
         }
     }
 
-    // function mint(address _account, uint256 amount) public {
-    //     require(totalSupply() < MAXMINT, "Max tokens already minted");
-    //     _mint(_account, amount);
-    // }
+    function getAllHolders() external view returns (address[] memory) {
+        return holders;
+    }
 
     function transfer(
         address to,

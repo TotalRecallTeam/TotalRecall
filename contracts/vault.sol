@@ -15,6 +15,7 @@ contract RWAVault {
     uint256 public totalShares;
     uint256 public price_ITO;
     uint256 public price_recall;
+    uint256 public tokens_distributed;
 
     event NFTDeposited(
         address indexed depositor,
@@ -68,17 +69,33 @@ contract RWAVault {
             "payment should be exactly equal to _amount"
         );
         RWAToken token = RWAToken(rwaTokenAddress);
+        tokens_distributed += _amount;
         token.transfer(msg.sender, _amount);
     }
 
     //code to distribute amount and get back tokens
-    function withdrawRWA(address _nftContract) external {
-        uint256 tokenId = tokenID;
-        require(tokenId != 0, "No NFT deposited from this contract");
+    function withdrawRWA(address _nftContract) external payable {
+        require(
+            rwaAddress != address(0),
+            "No NFT deposited from this contract"
+        );
+        require(
+            msg.value == (tokens_distributed * price_recall),
+            "payment should be exactly equal to recall amount"
+        );
+
+        RWAToken token = RWAToken(rwaTokenAddress);
+        address[] memory allHolders = token.getAllHolders();
+        for (uint256 i = 0; i < allHolders.length; i++) {
+            uint256 dist_amount = token.balanceOf(allHolders[i]) * price_recall;
+            payable(allHolders[i]).transfer(dist_amount);
+        }
+        token.burnAllTokens();
+
         IERC721 nftContract = IERC721(_nftContract);
-        nftContract.safeTransferFrom(address(this), msg.sender, tokenId);
-        owner = address(0);
+        nftContract.safeTransferFrom(address(this), msg.sender, tokenID);
         tokenID = 0;
-        emit NFTWithdrawn(msg.sender, _nftContract, tokenId);
+        rwaAddress = address(0);
+        emit NFTWithdrawn(msg.sender, _nftContract, tokenID);
     }
 }
